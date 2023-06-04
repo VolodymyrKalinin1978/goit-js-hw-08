@@ -4,16 +4,19 @@ import localstorageApi from './localstoridg';
 
 const LOCAL_STORAGE_KEY = 'feedback-form-state';
 
-refs.formEl.addEventListener('input', onEmailEndFeedbackInput);
+refs.formEl.addEventListener('input', throttle(onEmailEndFeedbackInput, 500));
 refs.formEl.addEventListener('submit', onEmailEndFeedbackSubmit);
+
+let localStorigData = {};
 
 returnPrivesPosition();
 
 function onEmailEndFeedbackInput(ev) {
-  const localStorigData = {
-    email: ev.currentTarget.elements[0].value,
-    message: ev.currentTarget.elements[1].value,
-  };
+  const target = ev.target;
+  const formElValue = target.value;
+  const formElName = target.name;
+
+  localStorigData[formElName] = formElValue;
 
   localstorageApi.save(LOCAL_STORAGE_KEY, localStorigData);
 }
