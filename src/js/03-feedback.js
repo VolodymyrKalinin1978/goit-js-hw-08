@@ -9,8 +9,6 @@ refs.formEl.addEventListener('submit', onEmailEndFeedbackSubmit);
 
 let localStorigData = {};
 
-returnPrivesPosition();
-
 function onEmailEndFeedbackInput(ev) {
   const target = ev.target;
   const formElValue = target.value;
@@ -23,14 +21,20 @@ function onEmailEndFeedbackInput(ev) {
 
 function onEmailEndFeedbackSubmit(ev) {
   ev.preventDefault();
-  if (!ev.currentTarget.elements[2]) {
-    return;
+
+  const {
+    elements: { email, message },
+  } = ev.currentTarget;
+
+  if (email.value === '' || message.value === '') {
+    return alert('Please fill in both email and message');
   }
 
-  const savedData = localstorageApi.load(LOCAL_STORAGE_KEY);
-  console.log(savedData);
+  // const savedData = localstorageApi.load(LOCAL_STORAGE_KEY);
+  console.log(localStorigData);
   ev.currentTarget.reset();
   localstorageApi.remove(LOCAL_STORAGE_KEY);
+  localStorigData = {};
 }
 
 function returnPrivesPosition() {
@@ -39,7 +43,16 @@ function returnPrivesPosition() {
     return;
   }
 
-  const { email, message } = saveMesage;
-  refs.formEl.elements[0].value = email;
-  refs.formEl.elements[1].value = message;
+  const formElements = refs.formEl.elements;
+
+  for (const key in saveMesage) {
+    if (saveMesage.hasOwnProperty(key)) {
+      formElements[key].value = saveMesage[key];
+      if (saveMesage[key]) {
+        localStorigData[key] = saveMesage[key];
+      }
+    }
+  }
 }
+
+returnPrivesPosition();
